@@ -1,42 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
+    <title>Cywalk | History</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Records</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Specific styles for history list */
+        #history-container { padding-bottom: 100px; }
+        .trip-info { flex-grow: 1; cursor: pointer; }
+        .delete-btn {
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: 0.2s;
+        }
+        .delete-btn:hover { background: #fecaca; }
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-sec);
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Past <span>Records</span></h1>
-        <div id="list" style="flex-grow: 1; overflow-y: auto;"></div>
-        <button onclick="location.href='index.html'" class="btn btn-mode">Back Home</button>
+    <div style="padding: 20px 15px 5px; display: flex; justify-content: space-between; align-items: center;">
+        <h2 style="margin:0;">Past Records</h2>
+        <span style="font-size: 12px; color: var(--text-sec);" id="count">0 trips</span>
+    </div>
+
+    <div id="history-container">
+        <div class="empty-state">Loading your journeys...</div>
+    </div>
+
+    <div style="position: fixed; bottom: 0; width: 100%; background: white; padding: 20px; box-sizing: border-box; box-shadow: 0 -5px 15px rgba(0,0,0,0.05);">
+        <button class="mode-btn" style="margin:0;" onclick="location.href='index.html'">Back Home</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-        
-        const firebaseConfig = { /* ... paste your config ... */ };
+        import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBv9lQi7pbdg-usNwd2HOhdpwT2OBVfr34",
+            authDomain: "cywalk-eddc3.firebaseapp.com",
+            databaseURL: "https://cywalk-eddc3-default-rtdb.firebaseio.com",
+            projectId: "cywalk-eddc3",
+        };
+
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const ridesRef = ref(db, "rides");
 
-        onValue(ref(db, "rides"), (snap) => {
-            const data = snap.val();
-            const list = document.getElementById("list");
-            list.innerHTML = "";
-            Object.values(data || {}).reverse().forEach(ride => {
-                list.innerHTML += `
-                    <div class="history-item">
-                        <div>
-                            <strong>${ride.mode === 'walking' ? '🚶' : '🚴'} ${ride.distance} km</strong>
-                            <div style="font-size: 0.8rem; color: var(--text-dim)">${ride.date}</div>
+        // Listen for data
+        onValue(ridesRef, (snapshot) => {
+            const container = document.getElementById('history-container');
+            const data = snapshot.val();
+            
+            if (!data) {
+                container.innerHTML = `<div class="empty-state"><h3>No trips yet!</h3><p>Start your first journey from the home screen.</p></div>`;
+                document.getElementById('count').innerText = "0 trips";
+                return;
+            }
+
+            const keys = Object.keys(data).reverse();
+            document.getElementById('count').innerText = `${keys.length} trips`;
+            container.innerHTML = "";
+
+            keys.forEach(id => {
+                const trip = data[id];
+                const card = document.createElement('div');
+                card.className = 'trip-card';
+                
+                card.innerHTML = `
+                    <div class="trip-info" onclick="viewTrip('${id}')">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <strong>${trip.mode === 'cycling' ? '🚴' : '🚶'} ${trip.mode.toUpperCase()}</strong>
                         </div>
-                        <div style="color: var(--primary); font-weight: bold">${ride.duration}</div>
+                        <div style="font-size:12px; color:var(--text-sec); margin-top:4px;">${trip.date}</div>
                     </div>
+                    <div style="text-align:right; cursor:pointer;" onclick="viewTrip('${id}')">
+                        <div style="color:var(--primary); font-weight:700;">${trip.distance} km</div>
+                        <div style="font-size:12px; color:var(--text-sec);">${trip.time}</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteTrip(event, '${id}')">🗑️</button>
                 `;
+                container.appendChild(card);
             });
         });
+
+        // Navigation function
+        window.viewTrip = (id) => {
+            window.location.href = `view-trip.html?id=${id}`;
+        };
+
+        // Delete function
+        window.deleteTrip = async (event, id) => {
+            event.stopPropagation(); // Prevents clicking the card when clicking delete
+            if (confirm("Delete this record permanently?")) {
+                try {
+                    await remove(ref(db, `rides/${id}`));
+                } catch (e) {
+                    alert("Error deleting: " + e.message);
+                }
+            }
+        };
     </script>
 </body>
 </html>

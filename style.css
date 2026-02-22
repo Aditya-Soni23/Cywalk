@@ -1,57 +1,160 @@
 :root {
-    --google-blue: #1a73e8;
-    --google-red: #ea4335;
-    --bg-light: #f8f9fa;
-    --text-main: #202124;
-    --text-sec: #5f6368;
-    --shadow: 0 1px 3px rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+    --primary: #1a73e8;
+    --primary-dark: #1557b0;
+    --bg-gradient: linear-gradient(135deg, #1a73e8, #6ea8ff);
+    --glass: rgba(255, 255, 255, 0.15);
+    --blur: blur(20px);
+    --text-main: #ffffff;
+    --text-sec: rgba(255,255,255,0.8);
 }
 
-body, html { 
-    margin: 0; padding: 0; width: 100%; height: 100%; 
-    font-family: 'Roboto', Arial, sans-serif; background: var(--bg-light); 
+* {
+    box-sizing: border-box;
 }
 
-/* Home Screen */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-gradient);
+    overflow: hidden;
+}
+
+/* HOME PAGE */
+
 .home-container {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 100vh; gap: 20px;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .main-card {
-    background: white; padding: 30px; border-radius: 24px;
-    box-shadow: var(--shadow); width: 85%; max-width: 400px; text-align: center;
+    background: var(--glass);
+    backdrop-filter: var(--blur);
+    border-radius: 25px;
+    padding: 40px;
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: fadeIn 0.5s ease;
 }
 
 .mode-btn {
-    width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #dadce0;
-    border-radius: 12px; background: white; font-size: 16px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%;
+    padding: 15px;
+    margin: 12px 0;
+    border-radius: 15px;
+    border: none;
+    background: white;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.mode-btn:active { background: #f1f3f4; }
+.mode-btn:hover {
+    transform: translateY(-2px);
+}
 
-/* Tracker Screen */
-#map { height: 100vh; width: 100%; z-index: 1; }
+.mode-btn:active {
+    transform: scale(0.96);
+}
+
+/* MAP FULL SCREEN */
+
+#map {
+    height: 100vh;
+    width: 100%;
+    z-index: 1;
+}
+
+/* GLASS STATS */
 
 .floating-stats {
-    position: absolute; top: 15px; left: 15px; right: 15px;
-    background: white; border-radius: 12px; padding: 15px;
-    display: grid; grid-template-columns: repeat(2, 1fr);
-    gap: 15px; box-shadow: var(--shadow); z-index: 10;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    background: var(--glass);
+    backdrop-filter: var(--blur);
+    border-radius: 20px;
+    padding: 18px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    color: white;
+    z-index: 1000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
 
-.stat-item { display: flex; flex-direction: column; }
-.label { font-size: 11px; color: var(--text-sec); text-transform: uppercase; font-weight: 700; }
-.val { font-size: 18px; font-weight: 500; color: var(--text-main); }
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.label {
+    font-size: 11px;
+    opacity: 0.8;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.val {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Finish Button */
 
 .bottom-controls {
-    position: absolute; bottom: 30px; left: 0; right: 0;
-    display: flex; justify-content: center; z-index: 10;
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
 }
 
 .finish-btn {
-    background: var(--google-blue); color: white; border: none;
-    padding: 15px 50px; border-radius: 30px; font-size: 16px; font-weight: 500;
-    box-shadow: 0 4px 12px rgba(26,115,232,0.4);
+    padding: 15px 60px;
+    border-radius: 30px;
+    border: none;
+    background: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.finish-btn:hover {
+    transform: scale(1.05);
+}
+
+/* HISTORY CARDS */
+
+.trip-card {
+    background: var(--glass);
+    backdrop-filter: var(--blur);
+    border-radius: 18px;
+    padding: 18px;
+    margin: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.trip-card:hover {
+    transform: translateY(-4px);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
 }

@@ -1,22 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Cywalk | Home</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cywalk | Home</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="home-container">
         <div class="main-card">
-            <h1 style="color: var(--google-blue); margin-bottom: 5px;">Cywalk</h1>
-            <p style="color: var(--text-sec); margin-bottom: 25px;">Ready for a session?</p>
-            
+            <h1 style="color: var(--primary); margin: 0;">Cywalk</h1>
+            <p style="color: var(--text-sec); margin-bottom: 30px;">Let's track your move.</p>
             <button class="mode-btn" onclick="start('walking')">🚶 Walking</button>
             <button class="mode-btn" onclick="start('cycling')">🚴 Cycling</button>
-            <button class="mode-btn" onclick="location.href='history.html'" style="border:none; color: var(--text-sec); font-size: 14px;">📜 View History</button>
+            <button onclick="location.href='history.html'" style="background:none; border:none; color:var(--text-sec); margin-top:15px; cursor:pointer;">View Records</button>
         </div>
     </div>
-
     <script>
         function start(m) {
             localStorage.setItem("cy_mode", m);
