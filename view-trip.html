@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Trip Details</title>
+    <title>Trip Summary</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
@@ -10,17 +10,16 @@
     <div id="map"></div>
     <div class="floating-stats">
         <div class="stat-item"><span class="label">Distance</span><span id="res-dist" class="val">--</span></div>
-        <div class="stat-item"><span class="label">Duration</span><span id="res-time" class="val">--</span></div>
+        <div class="stat-item"><span class="label">Avg Speed</span><span id="res-avg" class="val">--</span></div>
     </div>
-    <div class="bottom-controls">
-        <button class="finish-btn" style="background:var(--primary)" onclick="location.href='history.html'">Back</button>
-    </div>
+    <div class="bottom-controls"><button class="finish-btn" style="background:var(--primary)" onclick="location.href='history.html'">Back</button></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
+    
+        // Standard Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyBv9lQi7pbdg-usNwd2HOhdpwT2OBVfr34",
             authDomain: "cywalk-eddc3.firebaseapp.com",
@@ -29,33 +28,35 @@
         };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
-        const params = new URLSearchParams(window.location.search);
-        const tripId = params.get('id');
-
+    
+        const id = new URLSearchParams(window.location.search).get('id');
+    
         async function load() {
-            if (!tripId) return window.location.href = 'history.html';
+            const snap = await get(ref(db, `rides/${id}`));
+            if (!snap.exists()) return alert("Trip not found");
+            const trip = snap.val();
             
-            const snap = await get(ref(db, `rides/${tripId}`));
-            if (snap.exists()) {
-                const trip = snap.val();
-                document.getElementById('res-dist').innerText = trip.distance + " km";
-                document.getElementById('res-time').innerText = trip.time;
+            document.getElementById('res-dist').innerText = trip.distance + " km";
+            document.getElementById('res-avg').innerText = (trip.avgSpeed || "0.0") + " km/h";
+    
+            // LIGHT MODE MAP INIT
+            c// Change the [0, 0] to your home coordinates
+const map = L.map('map', { zoomControl: false }).setView([17.5274, 78.5371], 16);
 
-                const map = L.map('map', { zoomControl: false }).setView([0,0], 2);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-                if (trip.path) {
-                    // Firebase sometimes saves arrays as objects, convert back to array
-                    const pathArray = Object.values(trip.path);
-                    const coords = pathArray.map(p => [p.lat, p.lng]);
-                    
-                    const poly = L.polyline(coords, { color: '#2563eb', weight: 6 }).addTo(map);
-                    L.circleMarker(coords[0], { radius: 6, color: '#10b981', fillOpacity: 1 }).addTo(map);
-                    L.circleMarker(coords[coords.length-1], { radius: 6, color: '#ef4444', fillOpacity: 1 }).addTo(map);
-                    
-                    map.fitBounds(poly.getBounds(), { padding: [50, 50] });
-                }
+// Use the reliable Light Mode OpenStreetMap tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+    
+            if (trip.path) {
+                const coords = Object.values(trip.path).map(p => [p.lat, p.lng]);
+                const poly = L.polyline(coords, { color: '#2563eb', weight: 6, lineJoin: 'round' }).addTo(map);
+                
+                // Start/End Markers
+                L.circleMarker(coords[0], { radius: 6, color: '#fff', fillColor: '#10b981', fillOpacity: 1, weight: 2 }).addTo(map);
+                L.circleMarker(coords[coords.length-1], { radius: 6, color: '#fff', fillColor: '#ef4444', fillOpacity: 1, weight: 2 }).addTo(map);
+                
+                map.fitBounds(poly.getBounds(), { padding: [50, 50] });
             }
         }
         load();
