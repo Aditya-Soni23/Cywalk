@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cywalk | Tracking</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+</head>
+<body>
+
+    <div class="floating-stats">
+        <div class="stat-item"><span class="label">Distance</span><span id="d-val" class="val">0.00 km</span></div>
+        <div class="stat-item"><span class="label">Speed</span><span id="s-val" class="val">0.0 km/h</span></div>
+        <div class="stat-item"><span class="label">Duration</span><span id="t-val" class="val">00:00:00</span></div>
+        <div class="stat-item"><span class="label">Clock</span><span id="clock" class="val">--:--</span></div>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="bottom-controls">
+        <button class="finish-btn" id="stopAction">Finish Trip</button>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script type="module" src="tracker.js"></script>
+</body>
+</html>
