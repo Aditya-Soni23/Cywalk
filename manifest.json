@@ -9,12 +9,12 @@
     "orientation": "portrait",
     "icons": [
       {
-        "src": "cywalk.jpg",
+        "src": "cywalk.png",
         "sizes": "192x192",
         "type": "image/png"
       },
       {
-        "src": "cywalk.jpg",
+        "src": "cywalk.png",
         "sizes": "512x512",
         "type": "image/png"
       }
