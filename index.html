@@ -3,19 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cywalk | Home</title>
+    <title>Cywalk | Titanium</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --titanium: #e2e8f0;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --electric-blue: #38bdf8;
+            --glass: rgba(30, 41, 59, 0.7);
+        }
+
+        body {
+            background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            color: var(--titanium);
+            letter-spacing: -0.02em;
+        }
+
+        .main-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 60px 40px;
+            border-radius: 40px;
+            text-align: center;
+            width: 85%;
+            max-width: 380px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 85px;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .main-card:hover .logo {
+            transform: translateY(-5px) rotate(5deg);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin: 0;
+            background: linear-gradient(to bottom, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: lowercase; /* Makes it look modern/minimalist */
+        }
+
+        p {
+            color: var(--slate-400);
+            font-size: 0.95rem;
+            margin-bottom: 40px;
+            opacity: 0.8;
+        }
+
+        .mode-btn {
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 20px;
+            background: var(--titanium);
+            color: var(--slate-900);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        .mode-btn:hover {
+            background: var(--electric-blue);
+            color: white;
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(56, 189, 248, 0.3);
+        }
+
+        .history-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--slate-400);
+            padding: 12px 24px;
+            border-radius: 12px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.3s;
+        }
+
+        .history-btn:hover {
+            border-color: var(--electric-blue);
+            color: var(--electric-blue);
+        }
+    </style>
 </head>
 <body>
-    <div class="home-container">
-        <div class="main-card">
-            <h1 style="color: var(--primary); margin: 0;">Cywalk</h1>
-            <p style="color: var(--text-sec); margin-bottom: 30px;">Let's track your move.</p>
-            <button class="mode-btn" onclick="start('walking')">🚶 Walking</button>
-            <button class="mode-btn" onclick="start('cycling')">🚴 Cycling</button>
-            <button onclick="location.href='history.html'" style="background:none; border:none; color:var(--text-sec); margin-top:15px; cursor:pointer;">View Records</button>
+    <div class="main-card">
+        <div class="logo-container">
+            <img src="diamond.png" alt="Cywalk" class="logo">
         </div>
+        <h1>Cywalk</h1>
+        <p>Advanced Motion Intelligence</p>
+        
+        <button class="mode-btn" onclick="start('walking')">
+            <span>🚶</span> initiate walk
+        </button>
+        
+        <button class="mode-btn" onclick="start('cycling')">
+            <span>🚴</span> initiate cycle
+        </button>
+        
+        <button class="history-btn" onclick="location.href='history.html'">
+            view session archives
+        </button>
     </div>
+
     <script>
         function start(m) {
             localStorage.setItem("cy_mode", m);

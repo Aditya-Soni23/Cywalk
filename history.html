@@ -14,7 +14,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBv9lQi7pbdg-usNwd2HOhdpwT2OBVfr34",
@@ -29,31 +29,35 @@
             const container = document.getElementById('history-container');
             const data = snap.val();
             container.innerHTML = "";
-            if (!data) return;
+            
+            if (!data) {
+                container.innerHTML = `<p style="padding: 20px; color: var(--text-sec);">No journeys recorded yet.</p>`;
+                return;
+            }
 
+            // Get keys and reverse so newest trips are at the top
             Object.keys(data).reverse().forEach(id => {
                 const trip = data[id];
                 const card = document.createElement('div');
                 card.className = 'trip-card';
+                
+                // Entire card is now a clickable link to view the trip
+                card.style.cursor = "pointer";
+                card.onclick = () => location.href = `view-trip.html?id=${id}`;
+
                 card.innerHTML = `
-                    <div style="flex-grow:1" onclick="location.href='view-trip.html?id=${id}'">
-                        <strong>${trip.mode.toUpperCase()}</strong>
+                    <div style="flex-grow:1">
+                        <strong style="color: var(--text-main);">${(trip.mode || 'Trip').toUpperCase()}</strong>
                         <div style="font-size:12px; color:var(--text-sec)">${trip.date}</div>
                     </div>
-                    <div style="text-align:right; margin-right:15px">
+                    <div style="text-align:right">
                         <div style="color:var(--primary); font-weight:800">${trip.distance} km</div>
                         <div style="font-size:11px; color:var(--accent)">Avg: ${trip.avgSpeed || '0.0'} km/h</div>
                     </div>
-                    <button class="delete-btn" onclick="del(event, '${id}')">🗑️</button>
                 `;
                 container.appendChild(card);
             });
         });
-
-        window.del = (e, id) => {
-            e.stopPropagation();
-            if(confirm("Delete trip?")) remove(ref(db, `rides/${id}`));
-        };
     </script>
 </body>
 </html>
