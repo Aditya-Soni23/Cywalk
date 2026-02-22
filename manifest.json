@@ -2,7 +2,7 @@
     "name": "Cywalk Tracker",
     "short_name": "Cywalk",
     "description": "Advanced Motion Intelligence Tracker",
-    "start_url": "https://aditya-soni23.github.io/Cywalk/",
+    "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#0f172a",
     "theme_color": "#1e293b",
