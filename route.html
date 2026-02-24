@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Plan Route | Cywalk</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .route-controls {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+            width: 90%;
+        }
+        .btn-sm {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            border: none;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .add-btn { background: rgb(188, 188, 3); color: rgb(0, 0, 0); }
+        .finish-btn-nav { background: #10b981; color: white; }
+        
+        /* Modal for time input */
+        #timeModal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="route-controls">
+        <button class="btn-sm add-btn" id="addStop">📍 Add Stop</button>
+        <button class="btn-sm finish-btn-nav" id="finishRoute">🏁 Finish</button>
+    </div>
+
+    <div id="map" style="height: 100vh;"></div>
+
+    <div id="timeModal">
+        <div class="main-card" style="padding: 30px;">
+            <h3>Trip Time</h3>
+            <p>How many minutes did this take?</p>
+            <input type="number" id="minutesInput" placeholder="Enter minutes" 
+                   style="width: 100%; padding: 15px; border-radius: 10px; border: none; margin-bottom: 20px;">
+            <button class="mode-btn" id="saveManualTrip">Save Journey</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script type="module" src="route-logic.js"></script>
+</body>
+</html>
