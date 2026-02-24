@@ -20,8 +20,16 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-let polyline = L.polyline([], { color: '#3b82f6', weight: 6 }).addTo(map);
+let polyline = L.polyline([], { color: '#3b82f6', weight: 6, lineJoin: 'round' }).addTo(map);
 let marker = L.circleMarker([17.5274, 78.5371], { radius: 8, color: '#fff', fillColor: '#3b82f6', fillOpacity: 1 }).addTo(map);
+
+// Hidden routing control to handle signal gaps
+const router = L.Routing.control({
+    plan: L.Routing.plan([], { createMarker: () => false }),
+    lineOptions: { styles: [{ opacity: 0 }] }, // We don't want the router to draw its own line
+    show: false,
+    addWaypoints: false
+}).addTo(map);
 
 function getDist(lat1, lon1, lat2, lon2) {
     const R = 6371;
@@ -33,13 +41,11 @@ function getDist(lat1, lon1, lat2, lon2) {
 
 // REALTIME CLOCK & TRIP TIMER
 setInterval(() => {
-    // 1. Current Wall Clock Time
     const now = new Date();
     const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const clockEl = document.getElementById('clock');
     if(clockEl) clockEl.innerText = timeString;
 
-    // 2. Trip Duration Timer
     const diff = Date.now() - startTime;
     const h = Math.floor(diff / 3600000);
     const m = Math.floor((diff % 3600000) / 60000);
@@ -66,7 +72,32 @@ navigator.geolocation.watchPosition(pos => {
     } else {
         const last = pathPoints[pathPoints.length - 1];
         const gap = getDist(last.lat, last.lng, latitude, longitude);
-        if (gap > 0.002) {
+
+        // GAP HANDLING: If gap is > 50 meters, fetch road route
+        if (gap > 0.05) {
+            router.setWaypoints([
+                L.latLng(last.lat, last.lng),
+                L.latLng(latitude, longitude)
+            ]);
+
+            router.on('routesfound', (e) => {
+                const route = e.routes[0];
+                const roadCoords = route.coordinates;
+                
+                // Add actual road distance to total
+                totalDist += (route.summary.totalDistance / 1000);
+                document.getElementById('d-val').innerText = totalDist.toFixed(2) + " km";
+
+                // Add all intermediate road points to path for perfect "History" viewing
+                roadCoords.forEach(c => {
+                    pathPoints.push({ lat: c.lat, lng: c.lng });
+                    polyline.addLatLng([c.lat, c.lng]);
+                });
+                map.panTo(currentPos);
+            });
+        } 
+        // NORMAL TRACKING: If gap is small (2m to 50m)
+        else if (gap > 0.002) {
             totalDist += gap;
             document.getElementById('d-val').innerText = totalDist.toFixed(2) + " km";
             pathPoints.push({ lat: latitude, lng: longitude });
